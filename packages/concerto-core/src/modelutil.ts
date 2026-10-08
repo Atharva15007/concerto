@@ -131,8 +131,8 @@ class ModelUtil {
         }
 
         if (parts.length === 2 && !options?.disableVersionParsing) {
-            // Validate the version using semver
-            if (!semver.valid(parts[1])) {
+            // Strict SemVer 2.0.0 check: raw version must match semver.valid output directly
+            if (semver.valid(parts[1]) !== parts[1]) {
                 throw new Error(`Invalid namespace ${ns}`);
             }
             version = semver.parse(parts[1]);

@@ -34,8 +34,8 @@ describe('ModelUtil', function () {
         sandbox.restore();
     });
 
-    describe('#isPrimitiveType', function() {
-        it('check isPrimitiveType', function() {
+    describe('#isPrimitiveType', function () {
+        it('check isPrimitiveType', function () {
             ModelUtil.isPrimitiveType('org.acme.baz@1.0.0.Foo').should.equal(false);
             ModelUtil.isPrimitiveType('Boolean').should.equal(true);
             ModelUtil.isPrimitiveType('Integer').should.equal(true);
@@ -45,37 +45,37 @@ describe('ModelUtil', function () {
         });
     });
 
-    describe('#isValidIdentifier', function() {
+    describe('#isValidIdentifier', function () {
 
-        it('should return false for undefined', function() {
+        it('should return false for undefined', function () {
             ModelUtil.isValidIdentifier(undefined).should.equal(false);
         });
 
-        it('should return false for null', function() {
+        it('should return false for null', function () {
             ModelUtil.isValidIdentifier(null).should.equal(false);
         });
 
-        it('should preserve valid identifier strings "undefined" and "null"', function() {
+        it('should preserve valid identifier strings "undefined" and "null"', function () {
             ModelUtil.isValidIdentifier('undefined').should.equal(true);
             ModelUtil.isValidIdentifier('null').should.equal(true);
         });
 
     });
 
-    describe('#getShortName', function() {
+    describe('#getShortName', function () {
 
-        it('should handle a name with a namespace', function() {
+        it('should handle a name with a namespace', function () {
             ModelUtil.getShortName('org.acme.baz@1.0.0.Foo').should.equal('Foo');
         });
 
-        it('should handle a name without a namespace', function() {
+        it('should handle a name without a namespace', function () {
             ModelUtil.getShortName('Foo').should.equal('Foo');
         });
 
     });
 
-    describe('#getNamespace', function() {
-        it('check getNamespace', function() {
+    describe('#getNamespace', function () {
+        it('check getNamespace', function () {
             ModelUtil.getNamespace('org.acme.baz@1.0.0.Foo').should.equal('org.acme.baz@1.0.0');
             ModelUtil.getNamespace('Foo').should.equal('');
         });
@@ -101,46 +101,46 @@ describe('ModelUtil', function () {
 
     });
 
-    describe('#isAssignableTo', function() {
+    describe('#isAssignableTo', function () {
         let mockModelFile;
         let mockProperty;
 
-        beforeEach(function() {
+        beforeEach(function () {
             mockModelFile = sinon.createStubInstance(ModelFile);
             mockProperty = sinon.createStubInstance(Property);
         });
 
-        it('returns true for matching primitive types', function() {
+        it('returns true for matching primitive types', function () {
             mockProperty.getFullyQualifiedTypeName.returns('String');
             const result = ModelUtil.isAssignableTo(mockModelFile, 'String', mockProperty);
             result.should.equal(true);
         });
 
-        it('returns false for non-matching primitive types', function() {
+        it('returns false for non-matching primitive types', function () {
             mockProperty.getFullyQualifiedTypeName.returns('DateTime');
             const result = ModelUtil.isAssignableTo(mockModelFile, 'Boolean', mockProperty);
             result.should.equal(false);
         });
 
-        it('returns false for assignment of primitive to non-primitive property', function() {
+        it('returns false for assignment of primitive to non-primitive property', function () {
             mockProperty.getFullyQualifiedTypeName.returns('org.doge.Doge');
             const result = ModelUtil.isAssignableTo(mockModelFile, 'String', mockProperty);
             result.should.equal(false);
         });
 
-        it('returns false for assignment of non-primitive to primitive property', function() {
+        it('returns false for assignment of non-primitive to primitive property', function () {
             mockProperty.getFullyQualifiedTypeName.returns('String');
             const result = ModelUtil.isAssignableTo(mockModelFile, 'org.doge.Doge', mockProperty);
             result.should.equal(false);
         });
 
-        it('returns true if property type and required type are identical', function() {
+        it('returns true if property type and required type are identical', function () {
             mockProperty.getFullyQualifiedTypeName.returns('org.doge.Doge');
             const result = ModelUtil.isAssignableTo(mockModelFile, 'org.doge.Doge', mockProperty);
             result.should.equal(true);
         });
 
-        it('throws error when type cannot be found', function() {
+        it('throws error when type cannot be found', function () {
             mockProperty.getName.returns('theDoge');
             mockProperty.getFullyQualifiedTypeName.returns('org.doge.BaseDoge');
             const mockModelManager = sinon.createStubInstance(ModelManager);
@@ -153,34 +153,34 @@ describe('ModelUtil', function () {
 
     });
 
-    describe('#getFullyQualifiedName', function() {
-        it('valid inputs', function() {
+    describe('#getFullyQualifiedName', function () {
+        it('valid inputs', function () {
             const result = ModelUtil.getFullyQualifiedName('a.namespace', 'type');
             result.should.equal('a.namespace.type');
         });
 
-        it('empty namespace should return the type with no leading dot', function() {
+        it('empty namespace should return the type with no leading dot', function () {
             const result = ModelUtil.getFullyQualifiedName('', 'type');
             result.should.equal('type');
         });
 
     });
 
-    describe('#removeNamespaceVersionFromFullyQualifiedName', function() {
-        it('valid inputs', function() {
+    describe('#removeNamespaceVersionFromFullyQualifiedName', function () {
+        it('valid inputs', function () {
             const result = ModelUtil.removeNamespaceVersionFromFullyQualifiedName('org.acme@1.0.0.Person');
             result.should.equal('org.acme.Person');
         });
 
-        it('primtive type', function() {
+        it('primtive type', function () {
             const result = ModelUtil.removeNamespaceVersionFromFullyQualifiedName('String');
             result.should.equal('String');
         });
 
     });
 
-    describe('#parseNamespace', function() {
-        it('valid, with version', function() {
+    describe('#parseNamespace', function () {
+        it('valid, with version', function () {
             const nsInfo = ModelUtil.parseNamespace('org.acme@1.0.0');
             nsInfo.name.should.equal('org.acme');
             nsInfo.escapedNamespace.should.equal('org.acme_1.0.0');
@@ -188,7 +188,7 @@ describe('ModelUtil', function () {
             nsInfo.versionParsed.major.should.equal(1);
         });
 
-        it('valid, with version validation disabled', function() {
+        it('valid, with version validation disabled', function () {
             const nsInfo = ModelUtil.parseNamespace('org.acme@1.0.x', { disableVersionParsing: true });
             nsInfo.name.should.equal('org.acme');
             nsInfo.should.not.have.property('escapedNamespace');
@@ -196,21 +196,33 @@ describe('ModelUtil', function () {
             nsInfo.should.not.have.property('versionParsed');
         });
 
-        it('invalid', function() {
+        it('invalid', function () {
             (() => {
                 ModelUtil.parseNamespace(null);
             }).should.throw(/Namespace is null/);
         });
 
-        it('invalid', function() {
+        it('invalid', function () {
             (() => {
                 ModelUtil.parseNamespace('org.acme@1.0.0@2.3');
             }).should.throw(/Invalid namespace/);
         });
 
-        it('invalid version', function() {
+        it('invalid version', function () {
             (() => {
                 ModelUtil.parseNamespace('org.acme@1.1.2+.123');
+            }).should.throw(/Invalid namespace/);
+        });
+
+        it('invalid version with leading v', function () {
+            (() => {
+                ModelUtil.parseNamespace('org.acme@v1.0.0');
+            }).should.throw(/Invalid namespace/);
+        });
+
+        it('invalid version with surrounding spaces', function () {
+            (() => {
+                ModelUtil.parseNamespace('org.acme@ 1.0.0 ');
             }).should.throw(/Invalid namespace/);
         });
     });
