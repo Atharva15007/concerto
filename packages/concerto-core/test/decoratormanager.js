@@ -56,6 +56,30 @@ describe('DecoratorManager', () => {
     });
 
     describe('#validate', function() {
+        it('should reject a valid resource that is not a DecoratorCommandSet', function () {
+            const testModelManager = new ModelManager();
+            const modelText = fs.readFileSync(
+                path.join(__dirname, '/data/decoratorcommands/test.cto'),
+                'utf-8'
+            );
+            testModelManager.addCTOModel(modelText, 'test.cto');
+            const dcs = {
+                $class: 'org.accordproject.decoratorcommands@0.4.0.Command',
+                type: 'UPSERT',
+                target: {
+                    $class: 'org.accordproject.decoratorcommands@0.4.0.CommandTarget',
+                    type: 'concerto.metamodel@1.0.0.StringProperty'
+                },
+                decorator: {
+                    $class: 'concerto.metamodel@1.0.0.Decorator',
+                    name: 'Test'
+                }
+            };
+            (() => {
+                DecoratorManager.decorateModels(testModelManager, dcs, { validate: true });
+            }).should.throw(/expected.*DecoratorCommandSet/i);
+        });
+
         it('should support syntax validation', async function() {
             const dcs = fs.readFileSync(path.join(__dirname,'/data/decoratorcommands/web.json'), 'utf-8');
             const validationModelManager = DecoratorManager.validate( JSON.parse(dcs));
